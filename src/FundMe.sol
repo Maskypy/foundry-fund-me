@@ -5,6 +5,7 @@ import {PriceConverter} from "./PriceConverter.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 error FundMe__NotOwner();
 error FundMe__NotEnoughETH();
+error FundMe__CallFailed();
 
 contract FundMe {
     using PriceConverter for uint256;
@@ -34,6 +35,16 @@ contract FundMe {
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] += msg.value;
     }
-    // Functions to be implemented
-    function withdraw() public onlyOwner {}
+
+    function withdraw() public onlyOwner {
+        for (uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++) {
+            address funder = funders[funderIndex];
+            addressToAmountFunded[funder] = 0;
+        }
+        funders = new address[](0);
+        (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
+        if (!callSuccess) {
+            revert FundMe__CallFailed();
+        }
+    }
 }
