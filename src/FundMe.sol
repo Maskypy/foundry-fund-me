@@ -37,14 +37,25 @@ contract FundMe {
     }
 
     function withdraw() public onlyOwner {
-        for (uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++) {
-            address funder = funders[funderIndex];
+        // Copy array to memory to save gas
+        address[] memory memoryFunders = funders;
+        // Loop through memory array instead of storage array to save gas
+        for (uint256 i = 0; i < memoryFunders.length; i++) {
+            address funder = memoryFunders[i];
             addressToAmountFunded[funder] = 0;
         }
         funders = new address[](0);
-        (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
+        (bool callSuccess,) = payable(i_owner).call{value: address(this).balance}("");
         if (!callSuccess) {
             revert FundMe__CallFailed();
         }
+    }
+
+    receive() external payable {
+        fund();
+    }
+
+    fallback() external payable {
+        fund();
     }
 }
