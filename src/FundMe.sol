@@ -3,11 +3,12 @@ pragma solidity ^0.8.18;
 
 import {PriceConverter} from "./PriceConverter.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
-error FundMe__NotOwner();
-error FundMe__NotEnoughETH();
-error FundMe__CallFailed();
 
 contract FundMe {
+    error FundMe__NotOwner();
+    error FundMe__NotEnoughETH();
+    error FundMe__CallFailed();
+
     using PriceConverter for uint256;
     address public immutable i_owner;
     uint256 public constant MINIMUM_USD = 5e18;
