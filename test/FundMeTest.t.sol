@@ -19,7 +19,7 @@ contract FundMeTest is Test {
     }
 
     function testOwnerIsMsgSender() public view {
-        assertEq(fundMe.i_owner(), msg.sender);
+        assertEq(fundMe.getOwner(), msg.sender);
     }
 
     function testFundFailsWithoutEnoughETH() public {
@@ -30,7 +30,7 @@ contract FundMeTest is Test {
     function testFundUpdatesFundersData() public {
         vm.prank(USER); // Set the next call to be from USER
         fundMe.fund{value: 1e18}(); // Fund with 1 ETH
-        assertEq(fundMe.addressToAmountFunded(USER), 1e18); // Check that the mapping is updated
-        assertEq(fundMe.funders(0), USER); // Check that the funder is added to the array
+        assertEq(fundMe.getAddressToAmountFunded(USER), 1e18); // Check that the mapping is updated
+        assertEq(fundMe.getFunder(0), USER); // Check that the funder is added to the array
     }
 }
