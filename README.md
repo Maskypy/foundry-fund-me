@@ -1,66 +1,107 @@
-## Foundry
+# Foundry Fund Me
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+# About
 
-Foundry consists of:
+This is a minimal project allowing users to fund the contract owner with donations. The smart contract accepts ETH as donations, denominated in USD. Donations have a minimal USD value, otherwise they are rejected. The value is priced using a Chainlink price feed, and the smart contract keeps track of doners in case they are to be rewarded in the future.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+### Key Features:
+- **Chainlink Price Feeds:** Real-time ETH/USD conversion for minimum donation validation.
+- **Foundry DevOps:** Automated address discovery.
+- **Testing:** Unit and Integration testing. 
+- **Gas Optimized:** Efficient storage patterns using `immutable` and `constant` variables.
 
-## Documentation
 
-https://book.getfoundry.sh/
+## Requirements
+ - [foundry](https://getfoundry.sh/)
+ - Verify installation by running: `forge --version`
+## Quickstart
 
-## Usage
+```
+git clone https://github.com/Maskypy/foundry-fund-me.git
+cd foundry-fund-me
+make install
+```
+# Usage
+## Build & Test
+```
+forge build
+make test          # Runs all unit tests
+forge test -vvv    # Runs tests with detailed traces
+```
+#### Only run test functions 
 
-### Build
+```
+forge test --match-test testFunctionName
+```
+## Deploy
+### Deployment to Local Anvil
+1. Run Anvil in a separate terminal: `anvil`
+2. Deploy the contract:
+    ```make deploy-anvil```
 
-```shell
-$ forge build
+
+### Test Coverage
+
+```
+forge coverage
 ```
 
-### Test
+# Deployment to a testnet or mainnet
 
-```shell
-$ forge test
+1. Setup environment variables
+
+
+You'll want to set your `SEPOLIA_RPC_URL` / `PRIVATE_KEY` and `Anvil_RPC_URL` /  `Anvil_PK` as environment variables.
+
+You can add them to a `.env` file.
+
+
+2. Get testnet ETH
+
+Head over to [faucets.ethereum.link](https://cloud.google.com/application/web3/faucet/ethereum/sepolia) and get some testnet ETH. You should see the ETH show up in your metamask.
+
+3. Deploy
+
+```
+forge script script/DeployFundMe.s.sol --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY
 ```
 
-### Format
+## Scripts
 
-```shell
-$ forge fmt
+After deploying to a testnet or local net, you can run the scripts. 
+
+Using cast deployed locally example: 
+
+```
+cast send <FUNDME_CONTRACT_ADDRESS> "fund()" --value 0.1ether --private-key <PRIVATE_KEY>
 ```
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
+or
+```
+forge script script/Interactions.s.sol:WithdrawFundMe --rpc-url $Anvil_RPC_URL --private-key $PRIVATE_KEY  --broadcast
 ```
 
-### Anvil
+### Withdraw
 
-```shell
-$ anvil
+```
+cast send <FUNDME_CONTRACT_ADDRESS> "withdraw()"  --private-key <PRIVATE_KEY>
 ```
 
-### Deploy
+## Estimate gas
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+You can estimate how much gas things cost by running:
+
+```
+forge snapshot
 ```
 
-### Cast
+And you'll see an output file called `.gas-snapshot`
 
-```shell
-$ cast <subcommand>
+
+# Formatting
+
+To run code formatting:
 ```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+forge fmt
 ```
+# Thank you!

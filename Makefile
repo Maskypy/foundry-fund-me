@@ -8,6 +8,7 @@ all: clean install build
 # Basic Foundry Management
 clean  :; forge clean
 build  :; forge build
+install :; forge install smartcontractkit/chainlink-brownie-contracts && forge install Cyfrin/foundry-devops && forge install foundry-rs/forge-std
 
 # Testing
 test   :; forge test
